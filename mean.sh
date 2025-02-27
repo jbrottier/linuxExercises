@@ -2,29 +2,24 @@
 
 # Find mean of <column> from <file>
 
-# NOTE ** May need to fix this if the file is passed through standard input
-if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <column> <file>" 1>&2
-    exit 0
+# Creating the Usage Notice
+if [[  $# -lt 1 || $# -gt 2 ]]; then
+    echo "Usage: $0 <column> [<file>], if <file> not provided, it is read from standard input." 1>&2
+    exit 1
 fi
 
 # Creating the variables
 column=$1
-file=$2
+file=${2:-/dev/stdin}
 
-# Getting the file from standard input if no argument is passed
-if [[ -z $file ]]; then
-    file=/dev/stdin
-fi
-
-# Loop through the column to calculate the sum
+# Performing the calculations
 {
     sum=0
     count=0
 
-    # Use process substitution to avoid subshell issues
+    # Loop through the column
     while read -r value; do
-        # Will have to change this so that it handles more than integer add
+        # May need to add check to make sure numeric values
         sum=$(echo "$sum + $value" | bc)
         count=$((count + 1))
     done < <(tail -n +2 "$file" | cut -d',' -f"$column")
@@ -34,6 +29,7 @@ fi
         mean=$(echo "scale=4; $sum / $count" | bc)
         echo "For column $column, the mean is $mean"
     else
-        echo "Invalid Data in $column"
+        echo "Invalid Data in $column" 1>&2
+	exit 1
     fi
 }
