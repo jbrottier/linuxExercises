@@ -21,17 +21,19 @@ fi
 {
     sum=0
     count=0
-    tail -n +2 "$file" | cut -d',' -f"$column" | while read -r value; do
-	# Will have to change this so that it handles more than integer add
-	sum=$(echo "$sum + $value" | bc)
-	count=$((count + 1))
-    done
+
+    # Use process substitution to avoid subshell issues
+    while read -r value; do
+        # Will have to change this so that it handles more than integer add
+        sum=$(echo "$sum + $value" | bc)
+        count=$((count + 1))
+    done < <(tail -n +2 "$file" | cut -d',' -f"$column")
 
     # Calculate the mean
     if [[ $count -gt 0 ]]; then
-	mean=$(echo "scale=4; $sum / $count" | bc)
-	echo "For column $column, the mean is $mean"
+        mean=$(echo "scale=4; $sum / $count" | bc)
+        echo "For column $column, the mean is $mean"
     else
-	echo "Invalid Data in $column"
+        echo "Invalid Data in $column"
     fi
 }
