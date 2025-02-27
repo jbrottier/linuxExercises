@@ -22,15 +22,14 @@ fi
     sum=0
     count=0
     tail -n +2 "$file" | cut -d',' -f"$column" | while read -r value; do
-	if [[ -n $value ]]; then
-	    sum=$((sum + value))
-	    count=$((count + 1))
-	fi
+	# Will have to change this so that it handles more than integer add
+	sum=$(echo "$sum + $value" | bc)
+	count=$((count + 1))
     done
 
     # Calculate the mean
     if [[ $count -gt 0 ]]; then
-	mean=$(echo "scale=2; $sum / $count" | bc)
+	mean=$(echo "scale=4; $sum / $count" | bc)
 	echo "For column $column, the mean is $mean"
     else
 	echo "Invalid Data in $column"
