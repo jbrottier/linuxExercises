@@ -17,4 +17,22 @@ if [[ -z $file ]]; then
     file=/dev/stdin
 fi
 
-col=$(cut -d',' -f"$column" "$file")
+# Loop through the column to calculate the sum
+{
+    sum=0
+    count=0
+    tail -n +2 "$file" | cut -d',' -f"$column" | while read -r value; do
+	if [[ -n $value ]]; then
+	    sum=$((sum + value))
+	    count=$((count + 1))
+	fi
+    done
+
+    # Calculate the mean
+    if [[ $count -gt 0 ]]; then
+	mean=$(echo "scale=2; $sum / $count" | bc)
+	echo "For column $column, the mean is $mean"
+    else
+	echo "Invalid Data in $column"
+    fi
+}
