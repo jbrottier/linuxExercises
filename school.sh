@@ -16,11 +16,5 @@ cat Property_Tax_Roll.csv | grep "MADISON SCHOOLS" | cut -d',' -f7 |{
 
     
 #v1.2
-   
-
-#{		 sum = 0; while read n; do sum$(($sum + $n)); done; echo $sum;} #finds the sum
-
- #   | {output = 0; while read n; do sum=$(($sum+$n)) do avg = $(($sum/$n)); done, echo $sum && $avg} >> Property_Tax_Roll.csv
-
 
 
